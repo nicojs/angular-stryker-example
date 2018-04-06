@@ -3,27 +3,8 @@ const appConfig = getAppFromConfig();
 
 module.exports = function (config) {
   config.set({
-    files: [
-      // Exclude files so we can include only particular files later on
-      '!./**/*.ts',
-      '!./**/*.js',
-      `!./${appConfig.root}/**/*.d.ts`,
-
-      // Include source files and flag them for mutation
-      { pattern: `./${appConfig.root}/**/*.ts`, included: false, mutated: true },
-
-      // Exclude test files to later include them again without the mutated flag set to true
-      `!./${appConfig.root}/**/*.spec.ts`,
-      `!./${appConfig.root}/test.ts`,
-      { pattern: `./${appConfig.root}/**/*.spec.ts`, included: false, mutated: false },
-      { pattern: `./${appConfig.root}/test.ts`, included: false, mutated: false },
-
-      // Ignore environment configuration files
-      `!./${appConfig.root}/environments/*.ts`,
-
-      // Other assets (HTML and CSS for the browser)
-      `./${appConfig.root}/**/*.html`,
-      `./${appConfig.root}/**/*.css`,
+    mutate: [
+      'src/app/*.component.ts'
     ],
     testRunner: 'karma',
     mutator: 'typescript',
@@ -33,11 +14,19 @@ module.exports = function (config) {
     coverageAnalysis: 'off',
     karmaConfig: {
       frameworks: ['jasmine'],
-      browsers: ['ChromeHeadless'],
+      customContextFile: require.resolve('@angular/cli/plugins/karma-context.html'),
+      customDebugFile: require.resolve('@angular/cli/plugins/karma-debug.html'),
       plugins: [
         require.resolve('karma-jasmine'),
-        require.resolve('karma-chrome-launcher')
-      ]
+        require.resolve('karma-chrome-launcher'),
+      ],
+      proxies: {
+        "/_karma_webpack_/": "/base/dist/"
+      },
+      files: [
+        { pattern: './dist/*.js', included: false }
+      ],
+      browsers: ['ChromeHeadless']
     },
     tsconfigFile: 'tsconfig.json',
     webpack: {
