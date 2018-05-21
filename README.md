@@ -1,27 +1,33 @@
-# MyApp
+# Angular stryker example
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
+This is an example project on how to use Stryker, the mutation testing framework, in an Angular (CLI) project.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+* Mutates only *your typescript code*. Not the transpiled JavaScript or 3rd party library code.
+* Uses your Angular CLI webpack build (as much as possible)
+* Uses karma for testing
 
-## Code scaffolding
+## How to use
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Clone this library and run `npm install`. After that, run `npm run stryker`.
 
-## Build
+## Enable mutation testing in your angular project
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Follow these steps to enable Stryker mutation testing in your project.
 
-## Running unit tests
+1. Install 2 webpack plugins in your project: `npm i -D angular2-template-loader awesome-typescript-loader@^3`  
+  *NOTE:* the Awesome typescript loader v3 is webpack 3 compatible. Update once the angular-cli is based on webpack 4
+1. Install stryker with plugins: `npm i -D stryker-api stryker stryker-webpack-transpiler stryker-html-reporter stryker-typescript stryker-karma-runner`
+1. Copy over the `stryker.conf.js` file and `webpack-stryker.conf.js` file from this repository.
+1. Add `"stryker": "stryker run"` to your `"scripts"` config in your package.json file.
+1. Give it a go: `npm run stryker`
+ 
+## Notice
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+We're working on better integration with angular projects, but for now this is it. It might break at the next version, it uses some private api's of Angular. We'll keep working it.
 
-## Running end-to-end tests
+## Angular CLI
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
