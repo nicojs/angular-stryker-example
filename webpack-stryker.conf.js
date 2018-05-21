@@ -1,41 +1,54 @@
 const path = require('path');
 const webpack = require('webpack');
-const angularCliConfig = require('./.angular-cli');
-const getAppFromConfig = require('@angular/cli/utilities/app-utils').getAppFromConfig;
-const WebpackTestConfig = require('@angular/cli/models/webpack-test-config').WebpackTestConfig;
 const AngularCompilerPlugin = require('@ngtools/webpack/src/angular_compiler_plugin').AngularCompilerPlugin;
 
-const appConfig = getAppFromConfig();
-const testConfig = Object.assign({
-  environment: 'dev',
-  codeCoverage: false,
-  sourcemaps: false,
-  progress: true,
-  preserveSymlinks: false,
-});
-
-const webpackConfig = new WebpackTestConfig(testConfig, appConfig).buildConfig();
-
-webpackConfig.module.rules.forEach(rule => {
-  if (rule.loader === '@ngtools/webpack') {
-    delete rule.loader;
-    rule.loaders = [
-      {
-        loader: 'awesome-typescript-loader',
-        options: {
-          configFileName: path.resolve(appConfig.root, appConfig.testTsconfig),
-          silent: true
+function captureKarmaConfig() {
+  let karmaOptions = undefined;
+  require.cache[require.resolve('karma')] = {
+    exports: {
+      Server: function (options, cb) {
+        karmaOptions = options;
+        process.nextTick(cb);
+        return {
+          start() { }
         }
-      }, 'angular2-template-loader'
-    ]
+      }
+    }
+  };
+  let cli = require('@angular/cli/lib/cli');
+  if ('default' in cli) {
+    cli = cli.default;
   }
-});
-webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof AngularCompilerPlugin));
-webpackConfig.plugins.unshift(
-  new webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)/, path.resolve(__dirname, './src'))
-);
+  return cli({
+    cliArgs: ['test', '--watch=false'],
+    inputStream: process.stdin,
+    outputStream: process.stdout
+  }).then(_ => karmaOptions);
+}
 
-// Delete global styles entry, we don't want to load them.
-delete webpackConfig.entry.styles;
-webpackConfig.devtool = false;
-module.exports = webpackConfig;
+module.exports = captureKarmaConfig().then(options => {
+  const webpackConfig = options.buildWebpack.webpackConfig;
+  delete webpackConfig.entry.styles;
+  webpackConfig.output.publicPath = webpackConfig.output.path = path.resolve('dist');
+
+
+  webpackConfig.module.rules.forEach(rule => {
+    if (rule.loader === '@ngtools/webpack') {
+      delete rule.loader;
+      rule.loaders = [
+        {
+          loader: 'awesome-typescript-loader',
+          options: {
+            configFileName: path.resolve(options.buildWebpack.projectRoot, options.buildWebpack.options.tsConfig),
+            silent: true
+          }
+        }, 'angular2-template-loader'
+      ]
+    }
+  });
+  webpackConfig.plugins = webpackConfig.plugins.filter(plugin => !(plugin instanceof AngularCompilerPlugin));
+  webpackConfig.plugins.unshift(
+    new webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)/, path.resolve(__dirname, './src'))
+  );
+  return webpackConfig;
+});
