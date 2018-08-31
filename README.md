@@ -1,5 +1,13 @@
 # Angular stryker example
 
+**DEPRECATED**: The way of working described in this readme is deprecated, although it will still work.
+Angular-cli is now supported right out of the box in the [`stryker-karma-runner`](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#configuring).
+Please see [our handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/configuration/angular.md#angular) for 
+the official guide for angular projects. It requires angular-cli version 6.1.0, please try to upgrade using the [official angular upgrade guide](https://update.angular.io/) 
+if you're not on that version yet, or you can use this readme if you want.
+
+For angular 5, please see https://github.com/nicojs/angular-stryker-example/tree/72d85e19657247a77faa8e12587d3d301147b2bd
+
 This is an example project on how to use Stryker, the mutation testing framework, in an Angular (CLI) project.
 
 ## Features
