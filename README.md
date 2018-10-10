@@ -2,7 +2,7 @@
 
 **DEPRECATED**: The way of working described in this readme is deprecated, although it will still work.
 Angular-cli is now supported right out of the box in the [`stryker-karma-runner`](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#configuring).
-Please see [our handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/configuration/angular.md#angular) for 
+Please see [our handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular) for 
 the official guide for angular projects. It requires angular-cli version 6.1.0, please try to upgrade using the [official angular upgrade guide](https://update.angular.io/) 
 if you're not on that version yet, or you can use this readme if you want.
 
